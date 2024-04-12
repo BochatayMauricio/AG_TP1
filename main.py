@@ -53,13 +53,14 @@ def initialPoblation():
         initial.append(decimalToBinary(num))
     print('Poblacion Inicial: ')
     print(initial)
-
+    print('-------------------------------------------------------------------------------')
 def ActualValuesPoblation(numPoblation):
     j=0
     for i in initial:
         valueObjetive.insert(j,functionObjetive(binaryToDecimal(i))) 
+        print('Cromosoma: ',i, 'Valor funcion: ',valueObjetive[j])
         j+=j
-    print(valueObjetive)
+    print('-------------------------------------------------------------------------------')
     max=min= valueObjetive[0]
     total = 0
     for i in valueObjetive:
@@ -71,7 +72,6 @@ def ActualValuesPoblation(numPoblation):
     
     minimePoblational.insert(0,min)
     maximePoblational.insert(0,max)
-
     totalValue.append(total)
     prom.append(total/len(valueObjetive))
     if(numPoblation == 0):
@@ -84,13 +84,60 @@ def ActualValuesPoblation(numPoblation):
         print('minimo de poblacion actual: ',minimePoblational[numPoblation])
         print('maximo de poblacion actual: ',maximePoblational[numPoblation])
         print('Promedio de poblacion actual: ',prom[numPoblation])
-
+    print('-------------------------------------------------------------------------------')
 
 def functionFitness(poblation,numPoblation):
     long = len(poblation)
     for i in range(long):
-        fitness[i] = valueObjetive[i] / totalValue[numPoblation]
-        
+        fitness[i] = valueObjetive[i] / totalValue[numPoblation] #a cada cromosoma se lo puntua según el valor/sobre total
+
+
+def selectCrom(fitness:list):
+    ruleta = []
+    maxFitt = 0 
+    dif = 0 #por si no se completa la ruleta se la sumamos al que mas tiene para llegar a 100%
+    rulPos = 0 #numero de la ruleta
+    percenFitt = []
+    percenTotal=0
+    seleccion = [] #cromosomas seleccionados
+    numWin = 0
+    for i in range(10):
+        percenFitt[i] = int(fitness[i]*100) #fitness en forma de porcentaje a cada cromosoma
+        if(percenFitt[i] == 0):
+            percenFitt[i] = 1
+
+        if(percenFitt[i]>maxFitt):
+            maxFitt = percenFitt[i]
+
+        percenTotal+=percenFitt[i]
+    
+    if(percenTotal<100):
+        dif = 100 - percenTotal
+        index = percenFitt.index(maxFitt) #busco el indice del cromosoma con mas porcentaje
+        percenFitt[index]+=dif #le sumo el porcentaje que faltaba al cromosoma candidato
+
+    if(percenTotal>100):
+        dif = percenTotal - 100
+        index = percenFitt.index(maxFitt) #busco el indice del cromosoma con mas porcentaje
+        percenFitt[index]-=dif #se lo resto, para que la suma sea del 100%, no se exceda
+
+    #con dos for anidados, llenamos el arreglo ruleta segun los porcentajes de cada cromosoma, 
+    #mas porcentaje tiene mas posiciones en el arreglo tendra ese cromosoma
+    for c in range(10):
+        for i in range(percenFitt[c]):
+            ruleta[rulPos] = c
+            rulPos+=1
+    #ahora simulamos el giro de la ruleta
+    for j in range(10):
+        numWin = random.randint(1,100)
+        seleccion[j] = ruleta[numWin]
+    
+
+
+
+
 #PROGRAMA PRINCIPAL
 initialPoblation()
 ActualValuesPoblation(0)
+functionFitness(initial,0)
+selectCrom(fitness)
