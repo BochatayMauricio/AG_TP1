@@ -130,13 +130,20 @@ def selectCrom(fitness:list):
     for j in range(10):
         numWin = random.randint(1,100)
         seleccion.insert(j,ruleta[numWin])
+    
     print('Ruleta resultante: ',seleccion)
+    return seleccion
+
+def crossover(poblation:list,seleccion:list):
+    newPoblation = []
     
 
+    return newPoblation
 
 
 #PROGRAMA PRINCIPAL
 initialPoblation()
 ActualValuesPoblation(0)
 functionFitness(initial,0)
-selectCrom(fitness)
+seleccion = selectCrom(fitness)
+newPoblation = crossover(poblation,seleccion)
