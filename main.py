@@ -89,8 +89,7 @@ def ActualValuesPoblation(numPoblation):
 def functionFitness(poblation,numPoblation):
     long = len(poblation)
     for i in range(long):
-        fitness[i] = valueObjetive[i] / totalValue[numPoblation] #a cada cromosoma se lo puntua según el valor/sobre total
-
+        fitness.insert(i,valueObjetive[i] / totalValue[numPoblation])  #a cada cromosoma se lo puntua según el valor/sobre total
 
 def selectCrom(fitness:list):
     ruleta = []
@@ -102,7 +101,7 @@ def selectCrom(fitness:list):
     seleccion = [] #cromosomas seleccionados
     numWin = 0
     for i in range(10):
-        percenFitt[i] = int(fitness[i]*100) #fitness en forma de porcentaje a cada cromosoma
+        percenFitt.insert(i,int(fitness[i]*100)) #fitness en forma de porcentaje a cada cromosoma
         if(percenFitt[i] == 0):
             percenFitt[i] = 1
 
@@ -125,14 +124,14 @@ def selectCrom(fitness:list):
     #mas porcentaje tiene mas posiciones en el arreglo tendra ese cromosoma
     for c in range(10):
         for i in range(percenFitt[c]):
-            ruleta[rulPos] = c
+            ruleta.insert(rulPos,c) #guardamos el indice, no el decimal del cromosoma
             rulPos+=1
     #ahora simulamos el giro de la ruleta
     for j in range(10):
         numWin = random.randint(1,100)
-        seleccion[j] = ruleta[numWin]
+        seleccion.insert(j,ruleta[numWin])
+    print('Ruleta resultante: ',seleccion)
     
-
 
 
 
