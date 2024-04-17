@@ -7,13 +7,11 @@ num = 769051028
 #     binary.append(digit)
 # binary.reverse()
 
-# COMO ARRAY
-# binario = bin(num)
-# binario_solo = binario[2:]  #Elimina el prefijo '0b'
-# binario_array = [int(bit) for bit in binario_solo]  #Binario a lista de 0 y 1
-
 # COMO PALABRA
 binario = format(num, 'b')
+
+# COMO ARRAY
+binario_array = [int(bit) for bit in binario]  #Binario a lista de 0s y 1s
 
 # BINARIO A DECIMAL
 decimal = int(binario,2)
@@ -21,4 +19,5 @@ decimal = int(binario,2)
 
 print("Numero decimal: ",num)
 print("Pasado a binario: ",binario)
+print("Binario como lista: ",binario_array)
 print("Pasado a decimal: ",decimal)
