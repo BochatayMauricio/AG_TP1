@@ -54,9 +54,9 @@ def initialPoblation():
     print('Poblacion Inicial: ')
     print(initial)
     print('-------------------------------------------------------------------------------')
-def ActualValuesPoblation(numPoblation):
+def ActualValuesPoblation(numPoblation,poblationAct):
     j=0
-    for i in initial:
+    for i in poblationAct:
         valueObjetive.insert(j,functionObjetive(binaryToDecimal(i))) 
         print('Cromosoma: ',i, 'Valor funcion: ',valueObjetive[j])
         j+=j
@@ -70,8 +70,8 @@ def ActualValuesPoblation(numPoblation):
         if(i>max):
             max = i
     
-    minimePoblational.insert(0,min)
-    maximePoblational.insert(0,max)
+    minimePoblational.insert(numPoblation,min)
+    maximePoblational.insert(numPoblation,max)
     totalValue.append(total)
     prom.append(total/len(valueObjetive))
     if(numPoblation == 0):
@@ -143,7 +143,7 @@ def crossover(poblation:list,seleccion:list):
 
 #PROGRAMA PRINCIPAL
 initialPoblation()
-ActualValuesPoblation(0)
+ActualValuesPoblation(0,initial) #porque es la primera vez, despues invocamos con "poblation" por parametro
 functionFitness(initial,0)
 seleccion = selectCrom(fitness)
 newPoblation = crossover(poblation,seleccion)
