@@ -5,14 +5,21 @@ from openpyxl.styles import Font
 import matplotlib.pyplot as plt
 import math
 
+#PARAMETROS
+tamañoPoblacion = 10
+cantidadCorridas = 20
+probabilidadMutacion = 0.05
+probabilidadCrossover = 0.75
+
+
 #dominio de la funcino definido en el enunciado
-domain = [0,int(2**30)-1]
-initial = []
+dominio = [0,int(2**30)-1]
+poblacionInicial = []
 #en esta lista acumularemos el total de f(x) de cada poblacion
-totalValue = []
+totalPorPoblacion = []
 #Minimos ,maximos de cada poblacion, cada posicion refiere al numero de la poblacion
-minimePoblational = []
-maximePoblational = []
+minimosPoblacion = []
+maximosPoblacion = []
 #promedio de cada poblacion, cada posicion refiere al numero de la poblacion
 prom = []
 
@@ -23,11 +30,9 @@ fitness = []
 
 
 #Funcion definida --> devuelve valor de f(x) con x decimal
-def functionObjetive(x): 
+def funcionObjetivo(x): 
     return (x/((2**30)-1))**2
 
-def funcionInverse(y):
-    return math.sqrt(y)*(2**30-1)
 
 #Convierto a binario el gen en decimal --> me da un cromosoma binario
 def decimalToBinary(num:int):
@@ -54,68 +59,68 @@ def binaryToDecimal(binary:list):
     return decimal
 
 #Generar poblacion inicial
-def initialPoblation():
-    for _ in range(10):
-        num = random.randint(domain[0],domain[1])
-        initial.append(decimalToBinary(num))
+def iniciarPoblacion():
+    for _ in range(tamañoPoblacion):
+        num = random.randint(dominio[0],dominio[1])
+        poblacionInicial.append(decimalToBinary(num))
     print('Poblacion Inicial: ')
-    print(initial)
+    print(poblacionInicial)
     print('-------------------------------------------------------------------------------')
 
-def ActualValuesPoblation(numPoblation,poblationAct):
+def ActualValuesPoblation(numPoblacion,poblacionAct):
     j=0
     #Valor de la funcion objetivo en x, referencia el indice con el cromosoma de poblacion actual
-    valueObjetive = []
-    for i in poblationAct:
-        valueObjetive.insert(j,functionObjetive(binaryToDecimal(i))) 
-        print('Cromosoma: ',i, 'Valor funcion: ',valueObjetive[j])
+    valoresObjetivos = []
+    for i in poblacionAct:
+        valoresObjetivos.insert(j,funcionObjetivo(binaryToDecimal(i))) 
+        print('Cromosoma: ',i, 'Valor funcion: ',valoresObjetivos[j])
         j=j+1
     print('-------------------------------------------------------------------------------')
-    max=min= valueObjetive[0]
+    max=min= valoresObjetivos[0]
     total = 0
     indexMax=0
-    for i in range(10):
-        total+=valueObjetive[i]
-        if(valueObjetive[i]<min):
-            min = valueObjetive[i]
-        if(valueObjetive[i]>max):
-            max = valueObjetive[i]
+    for i in range(len(poblacionAct)):
+        total+=valoresObjetivos[i]
+        if(valoresObjetivos[i]<min):
+            min = valoresObjetivos[i]
+        if(valoresObjetivos[i]>max):
+            max = valoresObjetivos[i]
             indexMax = i
     
     print("Indice crom: ",indexMax)
-    cromMax = poblationAct[indexMax]
+    cromMax = poblacionAct[indexMax]
     
-    minimePoblational.insert(numPoblation,min)
-    maximePoblational.insert(numPoblation,max)
-    totalValue.append(total)
-    prom.append(total/len(valueObjetive))
-
-    if(numPoblation == 0):
-        print('total poblacion inicial: ',totalValue[numPoblation])
-        print('minimo de poblacion inicial: ',minimePoblational[numPoblation])
-        print('maximo de poblacion inicial: ',maximePoblational[numPoblation],'En el cromosoma: ',cromMax)
-        print('Promedio de poblacion inicial: ',prom[numPoblation])
+    minimosPoblacion.insert(numPoblacion,min) 
+    maximosPoblacion.insert(numPoblacion,max)
+    totalPorPoblacion.append(total)
+    prom.append(total/len(valoresObjetivos))
+ 
+    if(numPoblacion == 0):
+        print('total poblacion inicial: ',totalPorPoblacion[numPoblacion])
+        print('minimo de poblacion inicial: ',minimosPoblacion[numPoblacion])
+        print('maximo de poblacion inicial: ',maximosPoblacion[numPoblacion],'En el cromosoma: ',cromMax)
+        print('Promedio de poblacion inicial: ',prom[numPoblacion])
     else:
-        print('total poblacion '+str(numPoblation)+':',totalValue[numPoblation])
-        print('minimo de poblacion '+str(numPoblation)+':',minimePoblational[numPoblation])
-        print('maximo de poblacion '+str(numPoblation)+':',maximePoblational[numPoblation],'en el cromosoma: ',cromMax)
-        print('Promedio de poblacion '+str(numPoblation)+':',prom[numPoblation])
+        print('total poblacion '+str(numPoblacion)+':',totalPorPoblacion[numPoblacion])
+        print('minimo de poblacion '+str(numPoblacion)+':',minimosPoblacion[numPoblacion])
+        print('maximo de poblacion '+str(numPoblacion)+':',maximosPoblacion[numPoblacion],'en el cromosoma: ',cromMax)
+        print('Promedio de poblacion '+str(numPoblacion)+':',prom[numPoblacion])
     print('-------------------------------------------------------------------------------')
-    return valueObjetive
 
-def functionFitness(poblation,numPoblation,valueObjetive):
-    long = len(poblation)
-    print("long pob: ",long)
-    for i in range(10):
-        fitness.insert(i,valueObjetive[i] / totalValue[numPoblation])  #a cada cromosoma se lo puntua según el valor/sobre total
+    return valoresObjetivos
+
+def functionFitness(poblacionAct,numPoblacion,valoresObjetivos):
+    print("long pob: ",len(poblacionAct))
+    for i in range(len(poblacionAct)):
+        fitness.insert(i,valoresObjetivos[i] / totalPorPoblacion[numPoblacion])  #a cada cromosoma se lo puntua según el valor/sobre total
 
 def selectCromTorneo(fitness:list):
     seleccion = []
-    while len(seleccion) < 10:
+    while len(seleccion) < len(fitness):
         index1=index2=-1
         while True: #elegimos dos individuos distintos de la poblacion y los llevamos a torneo, el de mejor fitness será seleccionado
-            index1=random.randint(0,9)
-            index2=random.randint(0,9)
+            index1=random.randint(0,len(fitness)-1)
+            index2=random.randint(0,len(fitness)-1)
             if(index1!=index2):
                 break
         if(fitness[index1]>fitness[index2]):
@@ -125,14 +130,15 @@ def selectCromTorneo(fitness:list):
     print("Seleccion: ",seleccion)
     return seleccion
 
-def crossover(poblation:list,seleccion:list):
-    newPoblation = []
+def crossover(poblacionAct:list,seleccion:list):
+    nuevaPoblacion = []
     duplaPadres=[] #los dos que mas salieron en la ruleta
-    #Probabilidad de crossover
-    probabilidadCrossover = 0.75
+    longSeleccion = len(seleccion)
+    print('Longitud seleccion: ',longSeleccion)
+ 
     j=0
     z=1
-    for _ in range(5):
+    for _ in range(longSeleccion//2):
         duplaPadres.insert(0,seleccion[j])
         duplaPadres.insert(1,seleccion[z])
         j+=2
@@ -144,14 +150,14 @@ def crossover(poblation:list,seleccion:list):
             puntoCorte = random.randint(0,29)
             
             p11=[] #parte izquierda del padre 1
-            p12=[] #parte derecha del padre 2
-            p21=[] #parte izquierda del padre 1
+            p12=[] #parte derecha del padre 1
+            p21=[] #parte izquierda del padre 2
             p22=[]  #parte derecha del padre 2
             print('Punto de corte:',puntoCorte)
-            p11 = poblation[duplaPadres[0]][0:puntoCorte]
-            p12 = poblation[duplaPadres[0]][puntoCorte:30]
-            p21 = poblation[duplaPadres[1]][0:puntoCorte]
-            p22 = poblation[duplaPadres[1]][puntoCorte:30]
+            p11 = poblacionAct[duplaPadres[0]][0:puntoCorte]
+            p12 = poblacionAct[duplaPadres[0]][puntoCorte:30]
+            p21 = poblacionAct[duplaPadres[1]][0:puntoCorte]
+            p22 = poblacionAct[duplaPadres[1]][puntoCorte:30]
             print('Parte 1 padre1:', p11)
             print('Parte 2 padre1:', p12)
             print('Parte 1 padre2:', p21)
@@ -159,26 +165,22 @@ def crossover(poblation:list,seleccion:list):
             #Ya obtenidos los cromosomas divididos por el punto de corte random, hacemos el cruzamiento
             hijo1=p11+p22
             hijo2=p12+p21
-
-            hijo1Mut = mutacion(hijo1)
-            hijo2MUt = mutacion(hijo2)
-
+            
             hijo1Mut = mutacion(hijo1)
             hijo2MUt = mutacion(hijo2)
             
         else:
 
-            hijo1Mut = mutacion(poblation[duplaPadres[0]])
-            hijo2MUt = mutacion(poblation[duplaPadres[1]])
+            hijo1Mut = mutacion(poblacionAct[duplaPadres[0]])
+            hijo2MUt = mutacion(poblacionAct[duplaPadres[1]])
             
-        newPoblation.append(hijo1Mut)
-        newPoblation.append(hijo2MUt)
+        nuevaPoblacion.append(hijo1Mut)
+        nuevaPoblacion.append(hijo2MUt)
 
         duplaPadres.clear()
-    return newPoblation
+    return nuevaPoblacion
 
 def mutacion(cromosoma):
-    probabilidadMutacion=0.05
     probMutRandom = (random.randint(0,100))/100
     if(probMutRandom < probabilidadMutacion):
         puntoCambio = random.randint(0,29)
@@ -189,22 +191,22 @@ def mutacion(cromosoma):
             cromosoma.insert(puntoCambio,0)
     return cromosoma
 
-def guardarDatos(numPoblation,poblation:list):
-    indexCrom = valuesObjetive.index(maximePoblational[numPoblation])
+def guardarDatos(nomPoblacion,poblacionAct:list):
+    indexCrom = valoresObjetivo.index(maximosPoblacion[nomPoblacion])
 
-    cromMax = poblation[indexCrom]
-    minimo=minimePoblational[numPoblation]
-    maximo=maximePoblational[numPoblation]
-    promedio=prom[numPoblation]
+    cromMax = poblacionAct[indexCrom]
+    minimo=minimosPoblacion[nomPoblacion]
+    maximo=maximosPoblacion[nomPoblacion]
+    promedio=prom[nomPoblacion]
 
-    sheet['B'+str(numPoblation+2)] = minimo
-    sheet['C'+str(numPoblation+2)] = promedio
-    sheet['D'+str(numPoblation+2)] = maximo
-    sheet['E'+str(numPoblation+2)] = str(cromMax)
-    if(numPoblation==0):
-        sheet['A'+str(numPoblation+2)] = 'Inicial'
+    sheet['B'+str(nomPoblacion+2)] = minimo
+    sheet['C'+str(nomPoblacion+2)] = promedio
+    sheet['D'+str(nomPoblacion+2)] = maximo
+    sheet['E'+str(nomPoblacion+2)] = str(cromMax)
+    if(nomPoblacion==0):
+        sheet['A'+str(nomPoblacion+2)] = 'Inicial'
     else:
-        sheet['A'+str(numPoblation+2)] = numPoblation
+        sheet['A'+str(nomPoblacion+2)] = nomPoblacion
     book.save('resultados_corridas_torneo.xlsx')  
 
 def grafica(maximos,minimos,promedios):
@@ -232,18 +234,19 @@ sheet['C1'] = 'Promedio'
 sheet['D1'] = 'Maximo'
 sheet['E1'] = 'Cromosoma del maximo'
 
-initialPoblation()
-valuesObjetive = ActualValuesPoblation(0,initial) #porque es la primera vez, despues invocamos con "poblation" por parametro
-guardarDatos(0,initial)
-functionFitness(initial,0,valuesObjetive)
+iniciarPoblacion()
+valoresObjetivo = ActualValuesPoblation(0,poblacionInicial) #porque es la primera vez, despues invocamos con "poblation" por parametro
+guardarDatos(0,poblacionInicial)
+functionFitness(poblacionInicial,0,valoresObjetivo)
 seleccion = selectCromTorneo(fitness)
-siguientePoblacion = crossover(initial,seleccion)
-for j in range(1,21):
+siguientePoblacion = crossover(poblacionInicial,seleccion)
+for j in range(1,cantidadCorridas+1):
     fitness.clear()
-    valuesObjetive = ActualValuesPoblation(j,siguientePoblacion)
+    valoresObjetivo.clear()
+    valoresObjetivo = ActualValuesPoblation(j,siguientePoblacion)
     guardarDatos(j,siguientePoblacion)
-    functionFitness(siguientePoblacion,j,valuesObjetive)
+    functionFitness(siguientePoblacion,j,valoresObjetivo)
     seleccion = selectCromTorneo(fitness)
     poblacionAnterior = siguientePoblacion
     siguientePoblacion = crossover(poblacionAnterior,seleccion)
-grafica(maximePoblational,minimePoblational,prom)
+grafica(maximosPoblacion,minimosPoblacion,prom)
