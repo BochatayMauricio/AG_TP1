@@ -113,7 +113,7 @@ def functionFitness(poblacionAct,numPoblacion,valoresObjetivos):
         fitness.insert(i,valoresObjetivos[i] / totalPorPoblacion[numPoblacion])  #a cada cromosoma se lo puntua según el valor/sobre total
     
 def selectCromRuletaElite(fitness:list):
-    cantidadElites = tamañoPoblacion*0.20
+    
     ruleta = []
     maxFitt = 0 
     dif = 0 #por si no se completa la ruleta se la sumamos al que mas tiene para llegar a 100%
