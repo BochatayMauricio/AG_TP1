@@ -215,14 +215,16 @@ def crossover(poblation:list,seleccion:list):
             hijo1Mut = mutacion(hijo1)
             hijo2MUt = mutacion(hijo2)
             
-            newPoblation.append(hijo1Mut)
-            newPoblation.append(hijo2MUt)
-        else:
-            padre1Mut = mutacion(poblation[duplaPadres[0]])
-            padre2Mut = mutacion(poblation[duplaPadres[1]])
+            hijo1Mut = mutacion(hijo1)
+            hijo2MUt = mutacion(hijo2)
             
-            newPoblation.append(padre1Mut)
-            newPoblation.append(padre2Mut)
+        else:
+
+            hijo1Mut = mutacion(poblation[duplaPadres[0]])
+            hijo2MUt = mutacion(poblation[duplaPadres[1]])
+            
+        newPoblation.append(hijo1Mut)
+        newPoblation.append(hijo2MUt)
 
         duplaPadres.clear()
     return newPoblation
