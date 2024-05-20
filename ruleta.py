@@ -1,9 +1,8 @@
 import random 
-import numpy as np
 from openpyxl import Workbook
 from openpyxl.styles import Font
 import matplotlib.pyplot as plt
-import math
+
 
 #PARAMETROS
 tamañoPoblacion = 10
