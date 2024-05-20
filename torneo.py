@@ -9,7 +9,6 @@ cantidadCorridas = 20
 probabilidadMutacion = 0.05
 probabilidadCrossover = 0.75
 
-
 #dominio de la funcino definido en el enunciado
 dominio = [0,int(2**30)-1]
 poblacionInicial = []
