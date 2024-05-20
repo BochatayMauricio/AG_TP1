@@ -220,9 +220,13 @@ def mutacion(cromosoma):
     return cromosomaMutado
 
 def guardarDatos(nomPoblacion,poblacionAct:list):
+    #obtengo el cromosoma como lista
     indexCrom = valoresObjetivos.index(maximosPoblacion[nomPoblacion])
-
     cromMax = poblacionAct[indexCrom]
+    #convierto la lista binaria a decimal
+    decimalMaximo = binaryToDecimal(cromMax)
+    #convertimos de binario a string
+    cromMax=format(decimalMaximo,'b')
     minimo=minimosPoblacion[nomPoblacion]
     maximo=maximosPoblacion[nomPoblacion]
     promedio=prom[nomPoblacion]
@@ -230,7 +234,7 @@ def guardarDatos(nomPoblacion,poblacionAct:list):
     sheet['B'+str(nomPoblacion+2)] = minimo
     sheet['C'+str(nomPoblacion+2)] = promedio
     sheet['D'+str(nomPoblacion+2)] = maximo
-    sheet['E'+str(nomPoblacion+2)] = str(cromMax)
+    sheet['E'+str(nomPoblacion+2)] = cromMax
     if(nomPoblacion==0):
         sheet['A'+str(nomPoblacion+2)] = 'Inicial'
     else:
@@ -251,7 +255,9 @@ def grafica(maximos,minimos,promedios):
     plt.xlabel("Numero de poblacion")
     plt.ylabel("Valor f(x)")
     ax.legend(loc = 'lower right')
+    plt.savefig('Grafica_ruleta.png')
     plt.show()
+    
 
 
 

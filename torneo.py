@@ -192,9 +192,13 @@ def mutacion(cromosoma):
     return cromosoma
 
 def guardarDatos(nomPoblacion,poblacionAct:list):
+    #obtengo el cromosoma como lista
     indexCrom = valoresObjetivo.index(maximosPoblacion[nomPoblacion])
-
     cromMax = poblacionAct[indexCrom]
+    #convierto la lista binaria a decimal
+    decimalMaximo = binaryToDecimal(cromMax)
+    #convertimos de binario a string
+    cromMax=format(decimalMaximo,'b')
     minimo=minimosPoblacion[nomPoblacion]
     maximo=maximosPoblacion[nomPoblacion]
     promedio=prom[nomPoblacion]
@@ -223,7 +227,9 @@ def grafica(maximos,minimos,promedios):
     plt.xlabel("Numero de poblacion")
     plt.ylabel("Valor f(x)")
     ax.legend(loc = 'lower right')
+    plt.savefig('Grafica_torneo.png')
     plt.show()
+    
 
 #PROGRAMA PRINCIPAL
 book = Workbook()
