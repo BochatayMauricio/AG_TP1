@@ -224,9 +224,6 @@ def crossover(poblacionAct:list,seleccion:list):
             hijo1Mut = mutacion(hijo1)
             hijo2MUt = mutacion(hijo2)
             
-            hijo1Mut = mutacion(hijo1)
-            hijo2MUt = mutacion(hijo2)
-            
         else:
 
             hijo1Mut = mutacion(poblacionAct[duplaPadres[0]])
