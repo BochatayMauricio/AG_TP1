@@ -4,15 +4,15 @@ from openpyxl.styles import Font
 import matplotlib.pyplot as plt
 
 #PARAMETROS
-tamañoPoblacion = 10
+tamanoPoblacion = 10
 cantidadCorridas = 20
 probabilidadMutacion = 0.05
 probabilidadCrossover = 0.75
 
-#dominio de la funcino definido en el enunciado
+#dominio de la funcion definido en el enunciado
 dominio = [0,int(2**30)-1]
 poblacionInicial = []
-#en esta lista acumularemos el total de f(x) de cada poblacion
+#en esta lista acumularemos el total de f(x) de cada poblacion, cada posicion refiere al numero de la poblacion
 totalPorPoblacion = []
 #Minimos ,maximos de cada poblacion, cada posicion refiere al numero de la poblacion
 minimosPoblacion = []
@@ -31,7 +31,7 @@ def funcionObjetivo(x):
     return (x/((2**30)-1))**2
 
 
-#Convierto a binario el gen en decimal --> me da un cromosoma binario
+#Convertir a binario el cromosoma en decimal --> me da un cromosoma binario
 def decimalToBinary(num:int):
     binary=[]
     while (num>0):
@@ -44,7 +44,7 @@ def decimalToBinary(num:int):
     binary.reverse()
     return binary
 
-#Convierto a decimal el cromosoma.
+#Convertir a decimal el cromosoma.
 def binaryToDecimal(binary:list):
     decimal = 0
     i = 1
@@ -57,13 +57,15 @@ def binaryToDecimal(binary:list):
 
 #Generar poblacion inicial
 def iniciarPoblacion():
-    for _ in range(tamañoPoblacion):
+    for _ in range(tamanoPoblacion):
         num = random.randint(dominio[0],dominio[1])
         poblacionInicial.append(decimalToBinary(num))
     print('Poblacion Inicial: ')
     print(poblacionInicial)
     print('-------------------------------------------------------------------------------')
 
+
+#Calcular valores f(x) para cada individuo de la poblacion actual y devuelve un arreglo de los mismos
 def ActualValuesPoblation(numPoblacion,poblacionAct):
     j=0
     #Valor de la funcion objetivo en x, referencia el indice con el cromosoma de poblacion actual
@@ -106,11 +108,15 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
 
     return valoresObjetivos
 
+
+#Calcular fitness de cada cromosoma. A cada cromosoma se lo puntua según el valor de f(x) del cromosoma sobre el total de la poblacion
 def functionFitness(poblacionAct,numPoblacion,valoresObjetivos):
     print("long pob: ",len(poblacionAct))
     for i in range(len(poblacionAct)):
         fitness.insert(i,valoresObjetivos[i] / totalPorPoblacion[numPoblacion])  #a cada cromosoma se lo puntua según el valor/sobre total
 
+
+#Seleccionar cromosomas mediante Torneo. 
 def selectCromTorneo(fitness:list):
     seleccion = []
     while len(seleccion) < len(fitness):
@@ -127,6 +133,7 @@ def selectCromTorneo(fitness:list):
     print("Seleccion: ",seleccion)
     return seleccion
 
+#Realizar crossover entre los cromosomas seleccionados por la ruleta y posteriormente mutación.
 def crossover(poblacionAct:list,seleccion:list):
     nuevaPoblacion = []
     duplaPadres=[] #los dos que mas salieron en la ruleta
@@ -177,6 +184,7 @@ def crossover(poblacionAct:list,seleccion:list):
         duplaPadres.clear()
     return nuevaPoblacion
 
+#Realizar mutación de los cromosomas recibidos de la función crossover
 def mutacion(cromosoma):
     probMutRandom = (random.randint(0,100))/100
     if(probMutRandom < probabilidadMutacion):
@@ -188,6 +196,7 @@ def mutacion(cromosoma):
             cromosoma.insert(puntoCambio,0)
     return cromosoma
 
+#Generar tablas de resultados obtenidos
 def guardarDatos(nomPoblacion,poblacionAct:list):
     #obtengo el cromosoma como lista
     indexCrom = valoresObjetivo.index(maximosPoblacion[nomPoblacion])
@@ -210,6 +219,7 @@ def guardarDatos(nomPoblacion,poblacionAct:list):
         sheet['A'+str(nomPoblacion+2)] = nomPoblacion
     book.save('resultados_corridas_torneo.xlsx')  
 
+#Generar graficas de los resultados obtenidos
 def grafica(maximos,minimos,promedios):
     axis = []
     for i in range(len(maximos)):
@@ -227,7 +237,7 @@ def grafica(maximos,minimos,promedios):
     plt.savefig('Grafica_torneo.png')
     plt.show()
     
-
+# ----------------------------------------------------------------
 #PROGRAMA PRINCIPAL
 book = Workbook()
 sheet = book.active #hoja activa del excel
