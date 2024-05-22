@@ -108,7 +108,7 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
 
     return valoresObjetivos
 
-#Calcular fitness de cada cromosoma. A cada cromosoma se lo puntua según el valor de f(x) del cromosoma sobre el total de la poblacion
+#Calcular fitness de cada cromosoma. A cada cromosoma se lo puntua segun el valor de f(x) del cromosoma sobre el total de la poblacion
 def functionFitness(poblacionAct,numPoblacion,valoresObjetivos):
     print("long pob: ",len(poblacionAct))
     for i in range(len(poblacionAct)):
@@ -157,10 +157,10 @@ def selectCromRuleta(fitness:list):
     for l in range(tamanoPoblacion):
         numWin = random.randint(0,99)
         seleccion.insert(l,ruleta[numWin])
-    print('Ruleta resultante(Selección): ',seleccion)
+    print('Ruleta resultante(Seleccion): ',seleccion)
     return seleccion
 
-#Realizar crossover entre los cromosomas seleccionados por la ruleta y posteriormente mutación.
+#Realizar crossover entre los cromosomas seleccionados por la ruleta y posteriormente mutacion.
 def crossover(poblacionAct:list,seleccion:list):
     nuevaPoblacion = []
     duplaPadres=[] #los dos que mas salieron en la ruleta
@@ -197,21 +197,21 @@ def crossover(poblacionAct:list,seleccion:list):
             hijo2=p12+p21
             
             hijo1Mut = mutacion(hijo1)
-            hijo2MUt = mutacion(hijo2)
+            hijo2Mut = mutacion(hijo2)
             
         else:
 
             hijo1Mut = mutacion(poblacionAct[duplaPadres[0]])
-            hijo2MUt = mutacion(poblacionAct[duplaPadres[1]])
+            hijo2Mut = mutacion(poblacionAct[duplaPadres[1]])
             
         nuevaPoblacion.append(hijo1Mut)
-        nuevaPoblacion.append(hijo2MUt)
+        nuevaPoblacion.append(hijo2Mut)
 
         duplaPadres.clear()
     return nuevaPoblacion
 
 
-#Realizar mutación de los cromosomas recibidos de la función crossover
+#Realizar mutacion de los cromosomas recibidos de la funcion crossover
 def mutacion(cromosoma):
     cromosomaMutado = cromosoma
     probMutRandom = (random.randint(0,100))/100
