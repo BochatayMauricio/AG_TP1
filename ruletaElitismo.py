@@ -75,22 +75,18 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
         print('Cromosoma: ',i, 'Valor funcion: ',valoresObjetivos[j])
         j=j+1
     print('-------------------------------------------------------------------------------')
-    max=min= valoresObjetivos[0]
+    maximo= max(valoresObjetivos)
+    minimo = min(valoresObjetivos)
     total = 0
-    indexMax=0
+    indexMax= valoresObjetivos.index(maximo) #guardo el indice porque necesito saber el cromosoma correspondiente
     for i in range(len(poblacionAct)):
         total+=valoresObjetivos[i]
-        if(valoresObjetivos[i]<min):
-            min = valoresObjetivos[i]
-        if(valoresObjetivos[i]>max):
-            max = valoresObjetivos[i]
-            indexMax = i #guardo el indice porque necesito saber el cromosoma correspondiente
     
     print("Indice crom: ",indexMax)
     cromMax = poblacionAct[indexMax]
 
-    minimosPoblacion.insert(numPoblacion,min)
-    maximosPoblacion.insert(numPoblacion,max)
+    minimosPoblacion.insert(numPoblacion,minimo)
+    maximosPoblacion.insert(numPoblacion,maximo)
     totalPorPoblacion.append(total)
     promPorPoblacion.append(total/len(valoresObjetivos))
     

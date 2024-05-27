@@ -17,8 +17,8 @@ totalPorPoblacion = []
 #Minimos ,maximos de cada poblacion, cada posicion refiere al numero de la poblacion
 minimosPoblacion = []
 maximosPoblacion = []
-#promedio de cada poblacion, cada posicion refiere al numero de la poblacion
-prom = []
+#promPorPoblacionedio de cada poblacion, cada posicion refiere al numero de la poblacion
+promPorPoblacion = []
 
 #fitness de cada cromosoma de la poblacion actual
 fitness = []
@@ -75,35 +75,31 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
         print('Cromosoma: ',i, 'Valor funcion: ',valoresObjetivos[j])
         j=j+1
     print('-------------------------------------------------------------------------------')
-    max=min= valoresObjetivos[0]
+    maximo= max(valoresObjetivos)
+    minimo = min(valoresObjetivos)
     total = 0
-    indexMax=0
+    indexMax= valoresObjetivos.index(maximo) #guardo el indice porque necesito saber el cromosoma correspondiente
     for i in range(len(poblacionAct)):
         total+=valoresObjetivos[i]
-        if(valoresObjetivos[i]<min):
-            min = valoresObjetivos[i]
-        if(valoresObjetivos[i]>max):
-            max = valoresObjetivos[i]
-            indexMax = i
     
     print("Indice crom: ",indexMax)
     cromMax = poblacionAct[indexMax]
-    
-    minimosPoblacion.insert(numPoblacion,min) 
-    maximosPoblacion.insert(numPoblacion,max)
+
+    minimosPoblacion.insert(numPoblacion,minimo)
+    maximosPoblacion.insert(numPoblacion,maximo)
     totalPorPoblacion.append(total)
-    prom.append(total/len(valoresObjetivos))
+    promPorPoblacion.append(total/len(valoresObjetivos))
  
     if(numPoblacion == 0):
         print('total poblacion inicial: ',totalPorPoblacion[numPoblacion])
         print('minimo de poblacion inicial: ',minimosPoblacion[numPoblacion])
         print('maximo de poblacion inicial: ',maximosPoblacion[numPoblacion],'En el cromosoma: ',cromMax)
-        print('Promedio de poblacion inicial: ',prom[numPoblacion])
+        print('promPorPoblacionedio de poblacion inicial: ',promPorPoblacion[numPoblacion])
     else:
         print('total poblacion '+str(numPoblacion)+':',totalPorPoblacion[numPoblacion])
         print('minimo de poblacion '+str(numPoblacion)+':',minimosPoblacion[numPoblacion])
         print('maximo de poblacion '+str(numPoblacion)+':',maximosPoblacion[numPoblacion],'en el cromosoma: ',cromMax)
-        print('Promedio de poblacion '+str(numPoblacion)+':',prom[numPoblacion])
+        print('promPorPoblacionedio de poblacion '+str(numPoblacion)+':',promPorPoblacion[numPoblacion])
     print('-------------------------------------------------------------------------------')
 
     return valoresObjetivos
@@ -207,10 +203,10 @@ def guardarDatos(nomPoblacion,poblacionAct:list):
     cromMax=format(decimalMaximo,'b')
     minimo=minimosPoblacion[nomPoblacion]
     maximo=maximosPoblacion[nomPoblacion]
-    promedio=prom[nomPoblacion]
+    promPorPoblacionedio=promPorPoblacion[nomPoblacion]
 
     sheet['B'+str(nomPoblacion+2)] = minimo
-    sheet['C'+str(nomPoblacion+2)] = promedio
+    sheet['C'+str(nomPoblacion+2)] = promPorPoblacionedio
     sheet['D'+str(nomPoblacion+2)] = maximo
     sheet['E'+str(nomPoblacion+2)] = str(cromMax)
     if(nomPoblacion==0):
@@ -220,7 +216,7 @@ def guardarDatos(nomPoblacion,poblacionAct:list):
     book.save('resultados_corridas_torneo.xlsx')  
 
 #Generar graficas de los resultados obtenidos
-def grafica(maximos,minimos,promedios):
+def grafica(maximos,minimos,promPorPoblacionedios):
     axis = []
     for i in range(len(maximos)):
         axis.append(i)
@@ -229,8 +225,8 @@ def grafica(maximos,minimos,promedios):
     fig, ax = plt.subplots()
     ax.plot(axis,maximos,color='tab:red',label='Maximos')
     ax.plot(axis,minimos,color='tab:green',label='Minimos')
-    ax.plot(axis,promedios,color='tab:orange',label='Promedios')
-    plt.title("Maximos, Minimos y Promedios por poblacion")
+    ax.plot(axis,promPorPoblacionedios,color='tab:orange',label='promPorPoblacionedios')
+    plt.title("Maximos, Minimos y promPorPoblacionedios por poblacion")
     plt.xlabel("Numero de poblacion")
     plt.ylabel("Valor f(x)")
     ax.legend(loc = 'lower right')
@@ -243,7 +239,7 @@ book = Workbook()
 sheet = book.active #hoja activa del excel
 sheet['A1'] = 'Numero de Poblacion'
 sheet['B1'] = 'Minimo'
-sheet['C1'] = 'Promedio'
+sheet['C1'] = 'promPorPoblacionedio'
 sheet['D1'] = 'Maximo'
 sheet['E1'] = 'Cromosoma del maximo'
 
@@ -262,4 +258,4 @@ for j in range(1,cantidadCorridas+1):
     seleccion = selectCromTorneo(fitness)
     poblacionAnterior = siguientePoblacion
     siguientePoblacion = crossover(poblacionAnterior,seleccion)
-grafica(maximosPoblacion,minimosPoblacion,prom)
+grafica(maximosPoblacion,minimosPoblacion,promPorPoblacion)
