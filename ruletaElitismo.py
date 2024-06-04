@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 #PARAMETROS
 tamanoPoblacion = 10
-cantidadCorridas = 20
+cantidadCorridas = 200
 probabilidadMutacion = 0.05
 probabilidadCrossover = 0.75
 
@@ -75,7 +75,7 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
         print('Cromosoma: ',i, 'Valor funcion: ',valoresObjetivos[j])
         j=j+1
     print('-------------------------------------------------------------------------------')
-    maximo= max(valoresObjetivos)
+    maximo = max(valoresObjetivos)
     minimo = min(valoresObjetivos)
     total = 0
     indexMax= valoresObjetivos.index(maximo) #guardo el indice porque necesito saber el cromosoma correspondiente
@@ -107,7 +107,7 @@ def ActualValuesPoblation(numPoblacion,poblacionAct):
 def functionFitness(poblacionAct,numPoblacion,valoresObjetivos):
     print("long pob: ",len(poblacionAct))
     for i in range(len(poblacionAct)):
-        fitness.insert(i,valoresObjetivos[i] / totalPorPoblacion[numPoblacion])  #a cada cromosoma se lo puntua segun el valor/sobre total
+        fitness.append(valoresObjetivos[i] / totalPorPoblacion[numPoblacion])  #a cada cromosoma se lo puntua segun el valor/sobre total
     
 #Seleccionar cromosomas mediante ruleta aplicando elitismo
 def selectCromRuletaElite(fitness:list):
@@ -115,63 +115,70 @@ def selectCromRuletaElite(fitness:list):
     ruleta = []
     maxFitt = 0 
     dif = 0 #por si no se completa la ruleta se la sumamos al que mas tiene para llegar a 100%
-    rulPos = 0 #numero de la ruleta
     porcentajeFitt = []
     porcentajeTotal=0
     seleccion = [] #cromosomas seleccionados
     numWin = 0
     elites=[]
-    cantElites = int(0.20*len(fitness)) 
+    cantElites = int(0.20*tamanoPoblacion) 
 
     for i in range(len(fitness)):
         porcentajeFitt.insert(i,int(fitness[i]*100)) #fitness en forma de porcentaje a cada cromosoma
+        
         if(porcentajeFitt[i] == 0):
             porcentajeFitt[i] = 1
 
-        if(porcentajeFitt[i]>maxFitt):
-            maxFitt = porcentajeFitt[i]
-
         porcentajeTotal=porcentajeTotal+porcentajeFitt[i]
 
-    #completo fitness para que llegue al 100% el total
-    index = porcentajeFitt.index(maxFitt) #busco el indice del cromosoma con mas porcentaje
+    # maxFitt = max(porcentajeFitt)
+    # #completo fitness para que llegue al 100% el total
+    # index = porcentajeFitt.index(maxFitt) #busco el indice del cromosoma con mas porcentaje
 
-    if(porcentajeTotal<100):
-        dif = 100 - porcentajeTotal
-        porcentajeFitt[index]=porcentajeFitt[index]+dif #le sumo el porcentaje que faltaba al cromosoma candidato
+    # if(porcentajeTotal<100):
+    #     dif = 100 - porcentajeTotal
+    #     porcentajeFitt[index]=porcentajeFitt[index]+dif #le sumo el porcentaje que faltaba al cromosoma candidato
 
-    if(porcentajeTotal>100):
-        dif = porcentajeTotal - 100
-        porcentajeFitt[index]=porcentajeFitt[index]-dif #se lo resto, para que la suma sea del 100%, no se exceda
+    # if(porcentajeTotal>100):
+    #     dif = porcentajeTotal - 100
+    #     porcentajeFitt[index]=porcentajeFitt[index]-dif #se lo resto, para que la suma sea del 100%, no se exceda
     
     print("porcentaje total:",porcentajeFitt)
 
     #ELITISMO (buscamos los n maximos correspondientes al 20% de la longitud de la poblacion)
-    
+    #Tenemos que volver a buscarlo porque anteriormente modificamos al de mejor fittnes, entonces no me sirve el maxFitt
     maxFitness = heapq.nlargest(cantElites,fitness)
+    indiceDelAnterior = -1
     for valor in maxFitness:
-        indice = fitness.index(valor)
-        elites.append(indice)
+        indiceMax = fitness.index(valor)
+        if(indiceMax in elites): 
+            indiceDelAnterior = indiceMax
+            indice = fitness.index(valor,indiceDelAnterior,tamanoPoblacion)
+            elites.append(indice)
+        else:
+            indice = fitness.index(valor)
+            elites.append(indice)
     
-    print(maxFitness)
-    print(fitness)
-    print("Elites: ",elites)
+    print("Fitness maximos encontrados: ",maxFitness)
+    print("Fitness de toda la poblacion: ",fitness)
+    print("Elites(indice de los crom de mayor fitness): ",elites)
     for j in range(cantElites):
         seleccion.insert(j,elites[j])
+        porcentajeTotal = porcentajeTotal - porcentajeFitt[elites[j]]
+        porcentajeFitt[elites[j]]=0
 
-    
-
-    #llenamos el arreglo ruleta segun los porcentajes de cada cromosoma, 
-    #mas porcentaje tiene, mas posiciones en el arreglo "ruleta" tendra ese cromosoma 
-    for c in range(len(fitness)):
+    #llenamos la lista ruleta segun los porcentajes de cada cromosoma, 
+    #mas porcentaje tiene, mas posiciones en la lista "ruleta" tendra ese cromosoma 
+    for c in range(tamanoPoblacion):
         for _ in range(porcentajeFitt[c]):
-            ruleta.insert(rulPos,c) #guardamos el indice, no el decimal del cromosoma
-            rulPos+=1
-    
+            ruleta.append(c) #guardamos el indice, no el decimal del cromosoma
+
+    print("total posiciones: ",porcentajeTotal)
+    print("ruleta: ",ruleta)
     #ahora simulamos el giro de la ruleta (tamanoPoblacion-cantElites giros)
     for l in range(cantElites,tamanoPoblacion):
-        numWin = random.randint(0,99)
+        numWin = random.randint(0,porcentajeTotal-1)
         seleccion.insert(l,ruleta[numWin])
+
     print('Ruleta resultante(Seleccion): ',seleccion)
     return seleccion
 
@@ -179,20 +186,22 @@ def selectCromRuletaElite(fitness:list):
 def crossover(poblacionAct:list,seleccion:list):
     nuevaPoblacion = []
     duplaPadres=[] #los dos que mas salieron en la ruleta
-    cantElites = int(0.20*len(poblacionAct))
-    longSeleccion = len(seleccion)-cantElites #Porque los dos primeros que son los elites, pasan directo a la nueva poblacion
-
+    cantElites = int(0.20*tamanoPoblacion)
+    longSeleccion = len(seleccion) - cantElites #Porque los n primeros son los elites, pasan directo a la nueva poblacion
+    
     #paso a la siguiente poblacion los elites seleccionados
     for i in range(cantElites):
-        nuevaPoblacion.insert(i,poblacionAct[seleccion[i]])
+        print('elite a agregar: ',poblacionAct[seleccion[i]])
+        nuevaPoblacion.append(poblacionAct[seleccion[i]])
    
-    j=2
-    z=3
+    print("Nueva poblacion con los elites de la anterior: ",nuevaPoblacion)
+    j=cantElites
+    z=cantElites+1
     for _ in range(longSeleccion//2):
         duplaPadres.insert(0,seleccion[j])
         duplaPadres.insert(1,seleccion[z])
-        j+=2
-        z+=2
+        j=j+2
+        z=z+2
         print(duplaPadres)
         probabilidadRandom = (random.randint(0,100))/100
         if(probabilidadCrossover > probabilidadRandom):
@@ -219,16 +228,20 @@ def crossover(poblacionAct:list,seleccion:list):
             
             hijo1Mut = mutacion(hijo1)
             hijo2Mut = mutacion(hijo2)
+
+            nuevaPoblacion.append(hijo1Mut)
+            nuevaPoblacion.append(hijo2Mut)
             
         else:
 
             hijo1Mut = mutacion(poblacionAct[duplaPadres[0]])
             hijo2Mut = mutacion(poblacionAct[duplaPadres[1]])
             
-        nuevaPoblacion.append(hijo1Mut)
-        nuevaPoblacion.append(hijo2Mut)
+            nuevaPoblacion.append(hijo1Mut)
+            nuevaPoblacion.append(hijo2Mut)
 
         duplaPadres.clear()
+    print("nueva poblacion: ",nuevaPoblacion)
     return nuevaPoblacion
 
 #Realizar mutacion de los cromosomas recibidos de la funcion crossover
@@ -303,6 +316,7 @@ seleccion = selectCromRuletaElite(fitness)
 siguientePoblacion = crossover(poblacionInicial,seleccion)
 for j in range(1,cantidadCorridas+1):
     fitness.clear()
+    valoresObjetivo.clear()
     valoresObjetivo = ActualValuesPoblation(j,siguientePoblacion)
     guardarDatos(j,siguientePoblacion)
     functionFitness(siguientePoblacion,j,valoresObjetivo)

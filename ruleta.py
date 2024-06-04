@@ -115,7 +115,6 @@ def selectCromRuleta(fitness:list):
     ruleta = []
     maxFitt = 0 
     dif = 0 #por si no se completa la ruleta se la sumamos al que mas tiene para llegar a 100%
-    rulPos = 0 #numero de la ruleta
     porcentajeFitt = []
     porcentajeTotal=0
     seleccion = [] #cromosomas seleccionados
@@ -126,14 +125,11 @@ def selectCromRuleta(fitness:list):
         if(porcentajeFitt[i] == 0):
             porcentajeFitt[i] = 1
 
-        if(porcentajeFitt[i]>maxFitt):
-            maxFitt = porcentajeFitt[i]
-
         porcentajeTotal+=porcentajeFitt[i]
     
-    #completo fitness para que llegue al 100% el total
+    maxFitt = max(porcentajeFitt)
     index = porcentajeFitt.index(maxFitt) #busco el indice del cromosoma con mas porcentaje
-
+    #completo el porcentaje de fitness para que llegue al 100% el total de la ruleta.
     if(porcentajeTotal<100):
         dif = 100 - porcentajeTotal
         porcentajeFitt[index]=porcentajeFitt[index]+dif #le sumo el porcentaje que faltaba al cromosoma candidato
@@ -146,8 +142,7 @@ def selectCromRuleta(fitness:list):
     #mas porcentaje tiene, mas posiciones en el arreglo tendra ese cromosoma
     for c in range(len(fitness)):
         for _ in range(porcentajeFitt[c]):
-            ruleta.insert(rulPos,c) #guardamos el indice, no el decimal del cromosoma
-            rulPos+=1
+            ruleta.append(c) #guardamos el indice, no el decimal del cromosoma
     
     #ahora simulamos el giro de la ruleta (tamanoPoblacion giros)
     for l in range(tamanoPoblacion):
