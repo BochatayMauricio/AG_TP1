@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 #PARAMETROS
 tamanoPoblacion = 10
-cantidadCorridas = 100
+cantidadCorridas = 20
 probabilidadMutacion = 0.05
 probabilidadCrossover = 0.75
 
@@ -186,11 +186,12 @@ def mutacion(cromosoma):
     if(probMutRandom < probabilidadMutacion):
         puntoCambio = random.randint(0,29)
         print("antes de mutar: ",cromosoma)
-        valor=cromosoma.pop(puntoCambio)
-        if(valor==0):
-            cromosoma.insert(puntoCambio,1)
-        else:
-            cromosoma.insert(puntoCambio,0)
+        cromosoma[puntoCambio] = 1 - cromosoma[puntoCambio]
+        # valor = cromosoma.pop(puntoCambio)
+        # if(valor==0):
+        #     cromosoma.insert(puntoCambio,1)
+        # else:
+        #     cromosoma.insert(puntoCambio,0)
         print("hubo mutacion: ",cromosoma)
     return cromosoma
 

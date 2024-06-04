@@ -208,11 +208,14 @@ def mutacion(cromosoma):
     probMutRandom = (random.randint(0,100))/100
     if(probMutRandom < probabilidadMutacion):
         puntoCambio = random.randint(0,29)
-        valor=cromosomaMutado.pop(puntoCambio)
-        if(valor==0):
-            cromosomaMutado.insert(puntoCambio,1)
-        else:
-            cromosomaMutado.insert(puntoCambio,0)
+        print("antes de mutar: ",cromosoma)
+        cromosoma[puntoCambio] = 1 - cromosoma[puntoCambio]
+        # valor = cromosoma.pop(puntoCambio)
+        # if(valor==0):
+        #     cromosoma.insert(puntoCambio,1)
+        # else:
+        #     cromosoma.insert(puntoCambio,0)
+        print("hubo mutacion: ",cromosoma)
     return cromosomaMutado
 
 #Generar tablas de resultados obtenidos
